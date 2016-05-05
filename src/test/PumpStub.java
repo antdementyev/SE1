@@ -12,11 +12,13 @@ public class PumpStub implements IPump {
 	@Override
 	public void sendActivate() {
 	    signal = TO_ACTIVATE;
+	    System.out.println("activate pump");
 	}
 
 	@Override
 	public void sendDeactivate() {
         signal = TO_DEACTIVATE;
+        System.out.println("deactivate pump");
 	}
 
 	@Override

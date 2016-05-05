@@ -12,11 +12,13 @@ public class GateStub implements IGate {
 	@Override
 	public void sendCloseGate() {
 	    signal = TO_CLOSE;
+	    System.out.println("close gate");
 	}
 
 	@Override
 	public void sendOpenGate() {
 	    signal = TO_OPEN;
+	    System.out.println("open gate");
 	}
 
 	@Override

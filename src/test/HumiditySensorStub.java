@@ -8,6 +8,7 @@ public class HumiditySensorStub implements IHumiditySensor {
     
 	@Override
 	public double getHumidity() {
+	    System.out.println("humidity: " + humidity);
 		return humidity;
 	}
 

@@ -13,21 +13,25 @@ public class OpticalSignalsStub implements IOpticalSignals {
 	@Override
 	public void switchLampAOn() {
 	    lampA = ON;
+	    System.out.println("Lamp A on");
 	}
 
 	@Override
 	public void switchLampAOff() {
 	    lampA = OFF;
+        System.out.println("Lamp A off");
 	}
 
 	@Override
 	public void switchLampBOn() {
 	    lampB = ON;
+	    System.out.println("Lamp B on");
 	}
 
 	@Override
 	public void switchLampBOff() {
 	    lampB = OFF;
+	    System.out.println("Lamp B off");
 	}
 
 }
