@@ -1,9 +1,5 @@
 package test;
-/**
- * Test Framework for testing the FSM from Practice 3
- * @author Thomas Lehmann
- * @version 2015-11-18
- */
+
 import static org.junit.Assert.*;
 import fsm.IFSM;
 import implementation.FSMImplementation;
@@ -12,13 +8,11 @@ import implementation.FSMState;
 import org.junit.Before;
 import org.junit.Test;
 
-import boundaryclasses.IGate;
-import boundaryclasses.IHumidifier;
-import boundaryclasses.IHumiditySensor;
-import boundaryclasses.IManualControl;
-import boundaryclasses.IOpticalSignals;
-import boundaryclasses.IPump;
-
+/**
+ * Test Framework for testing the FSM from Practice 3
+ * @author Thomas Lehmann
+ * @version 2015-11-18
+ */
 public class FSMImplementationTest {
 	private PumpStub pumpA;
 	private PumpStub pumpB;
@@ -28,6 +22,7 @@ public class FSMImplementationTest {
 	private HumidifierStub humidifier;
 	private ManualControlStub operatorPanel;
 	private IFSM uut;
+	private TimerStub timer;
 
 	@Before
 	public void testSetup(){
@@ -38,13 +33,24 @@ public class FSMImplementationTest {
 		sensor = new HumiditySensorStub();
 		humidifier = new HumidifierStub();
 		operatorPanel = new ManualControlStub();
-		uut = new FSMImplementation(  pumpA,  pumpB,  gate,  signals,
-				humidifier,  sensor,  operatorPanel) ;
+		timer = new TimerStub();
+		uut = new FSMImplementation(pumpA,  pumpB,  gate,  signals,
+				humidifier,  sensor,  operatorPanel, timer);
 	}
 	
 	@Test
 	public void testPath() {
-
+	    uut.evaluate();
+        assertEquals(1, gate.getClosingMessageCounter());
+        assertEquals(1, gate.getOpeningMessageCounter());
+        assertEquals(2, signals.getLampBOnMessageCounter());
+        assertEquals(2, signals.getLampBOffMessageCounter());
+        assertEquals(1, pumpA.getActivatingMessageCounter());
+        assertEquals(1, pumpA.getDeactivatingMessageCounter());
+        assertEquals(1, pumpB.getActivatingMessageCounter());
+        assertEquals(1, pumpB.getDeactivatingMessageCounter());
+        assertEquals(FSMState.HUMIDITY_OKAY, uut.getState());
+        
 	}
 
 }

@@ -23,4 +23,6 @@ public interface IPump {
 	  * @return whether the message has been received or not.
 	  */
 	public boolean receivedActivated();
+	
+	public boolean isActivated();
 }

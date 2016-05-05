@@ -29,4 +29,8 @@ public interface IGate {
 	  * @return whether the message has been received or not.
 	  */
 	 public boolean receivedGateOpen();
+	 
+	 public boolean isClosed();
+	 
+	 public boolean isOpen();
  }

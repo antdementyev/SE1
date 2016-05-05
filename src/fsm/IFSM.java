@@ -1,4 +1,7 @@
 package fsm;
+
+import implementation.FSMState;
+
 /**
  * Interface for state machine evaluation.
  * @author Thomas Lehmann
@@ -10,4 +13,6 @@ public interface IFSM {
 	 *  output actions.
 	 */
 	public void evaluate();
+	
+	public FSMState getState();
 }
