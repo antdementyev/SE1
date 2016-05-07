@@ -42,16 +42,6 @@ public class OpticalSignalsStub implements IOpticalSignals {
 	    lampBOffMessageCounter++;
 	}
 
-    @Override
-    public boolean isLampAOn() {
-        return lampA == ON;
-    }
-
-    @Override
-    public boolean isLampBOn() {
-        return lampB == ON;
-    }
-
     public int getLampAOnMessageCounter() {
         return lampAOnMessageCounter;
     }

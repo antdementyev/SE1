@@ -9,6 +9,4 @@ public interface IOpticalSignals {
 	public void switchLampAOff();
 	public void switchLampBOn();
 	public void switchLampBOff();
-	public boolean isLampAOn();
-	public boolean isLampBOn();
 }
