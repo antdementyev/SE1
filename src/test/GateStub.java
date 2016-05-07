@@ -36,11 +36,13 @@ public class GateStub implements IGate {
 
     @Override
     public boolean isClosed() {
+        System.out.format("Gate is %s\n", receivedGateClosed() ? "closed" : "open");
         return receivedGateClosed();
     }
 
     @Override
     public boolean isOpen() {
+        System.out.format("Gate is %s\n", receivedGateOpen() ? "open" : "closed");
         return receivedGateOpen();
     }
 

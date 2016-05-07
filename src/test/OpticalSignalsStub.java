@@ -4,10 +4,6 @@ import boundaryclasses.IOpticalSignals;
 
 public class OpticalSignalsStub implements IOpticalSignals {
 
-    private final int ON = 1;
-    private final int OFF = 0;
-    private int lampA;
-    private int lampB;
     private int lampAOnMessageCounter;
     private int lampAOffMessageCounter;
     private int lampBOnMessageCounter;
@@ -16,28 +12,24 @@ public class OpticalSignalsStub implements IOpticalSignals {
     
 	@Override
 	public void switchLampAOn() {
-	    lampA = ON;
 	    System.out.println("Lamp A on");
 	    lampAOnMessageCounter++;
 	}
 
 	@Override
 	public void switchLampAOff() {
-	    lampA = OFF;
         System.out.println("Lamp A off");
         lampAOffMessageCounter++;
 	}
 
 	@Override
 	public void switchLampBOn() {
-	    lampB = ON;
 	    System.out.println("Lamp B on");
 	    lampBOnMessageCounter++;
 	}
 
 	@Override
 	public void switchLampBOff() {
-	    lampB = OFF;
 	    System.out.println("Lamp B off");
 	    lampBOffMessageCounter++;
 	}

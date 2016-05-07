@@ -37,59 +37,79 @@ public class FSMImplementation implements IFSM {
 		lowerBound = 20;
 	}
 	
+	
+	@Override
+	public void evaluate() {
+		updateState();
+		switch(state) {
+		    case HUMIDITY_LOW:
+		        humidifier.sendSprayOn();
+	            signals.switchLampAOn();
+	            break;
+		    case HUMIDITY_OKAY:
+		        if (humidifier.isSprayOn()) {
+		            humidifier.sendSprayOff();
+		            signals.switchLampAOff();
+		        }
+		        break;
+		    case HUMIDITY_HIGH:
+		        signals.switchLampBOn();
+		        gate.sendCloseGate();
+	            while (!gate.isClosed()) {
+	                // warte auf Rückmeldung vom Tor
+	            }
+	            signals.switchLampBOff();
+	            if (activatePumps()) {
+	                // Pumpen wurden erfolgreich aktiviert
+	                while (sensor.getHumidity() > upperBound) {
+	                    // warte bis Feuchtigkeit sich stabilisiert
+	                }
+	                pumpA.sendDeactivate();
+	                pumpB.sendDeactivate();
+	                signals.switchLampBOn();
+	                gate.sendOpenGate();
+	                while (!gate.isOpen()) {  
+	                    // warte auf Rückmeldung vom Tor
+	                }
+	                signals.switchLampBOff();
+	                state = FSMState.HUMIDITY_OKAY;
+	            } else {
+	                // Probleme beim Aktivieren der Pumpen
+	                pumpA.sendDeactivate();
+	                pumpB.sendDeactivate();
+	                gate.sendOpenGate();
+	                state = FSMState.ERROR;
+	            }      
+	            break;
+		    case ERROR:
+                while (!operatorPanel.receivedAcknowledgement()) {    
+                    // warte auf manuelle Bestätigung
+                }
+                state = FSMState.HUMIDITY_HIGH;
+		}
+	}
+	
 	@Override
 	public FSMState getState() {
 	    return state;
 	}
-
-	@Override
-	public void evaluate() {
-		double humidity = sensor.getHumidity();
-		if (humidity < lowerBound) {
-		    // Zu trocken
-		    state = FSMState.HUMIDITY_LOW;
-		    humidifier.sendSprayOn();
-		    signals.switchLampAOn();
-		} else if (humidity >= lowerBound && humidity <= upperBound
-		            && state == FSMState.HUMIDITY_LOW) {
-		    // wieder ok
-		    state = FSMState.HUMIDITY_OKAY;
-		    humidifier.sendSprayOff();
-            signals.switchLampAOff();
-		} else if (humidity > upperBound) {
-		    // zu feucht
-		    state = FSMState.HUMIDITY_HIGH;
-		    gate.sendCloseGate();
-		    signals.switchLampBOn();
-		    while (!gate.isClosed()) {
-		        // warte auf Rückmeldung vom Tor
-		    }
-		    signals.switchLampBOff();
-		    if (activatePumps()) {
-		        // Pumpen sind erfolgreich aktiviert
-		        while (sensor.getHumidity() > upperBound) {
-		            // warte bis Feuchtigkeit sich stabilisiert
-		        }
-		        pumpA.sendDeactivate();
-		        pumpB.sendDeactivate();
-		        gate.sendOpenGate();
-		        signals.switchLampBOn();
-		        while (!gate.isOpen()) {  // warte auf Rückmeldung vom Tor
-	            }
-		        signals.switchLampBOff();
-		        state = FSMState.HUMIDITY_OKAY;
-		    } else {
-		        // Probleme beim Aktivieren der Pumpen
-		        pumpA.sendDeactivate();
-                pumpB.sendDeactivate();
-                gate.sendOpenGate();
-		        state = FSMState.ERROR;
-		        while (!operatorPanel.receivedAcknowledgement()) {    
-		            // warte auf manuelle Bestätigung
-		        }
-		        state = FSMState.HUMIDITY_HIGH;
-		    }		    
-		}
+	
+	/**
+	 * Updates the FSM state based on an actual humidity.
+	 */
+	private void updateState() {
+	    if (state == FSMState.ERROR) {
+	        // Status bleibt ohne Änderung
+	    } else {
+	        double humidity = sensor.getHumidity();
+	        if (humidity < lowerBound) {
+	            state = FSMState.HUMIDITY_LOW;
+	        } else if (humidity >= lowerBound && humidity <= upperBound) {
+	            state = FSMState.HUMIDITY_OKAY;
+	        } else {
+	            state = FSMState.HUMIDITY_HIGH;
+	        }
+	    }
 	}
 	
 	/**

@@ -13,4 +13,6 @@ public interface IHumidifier {
 	 * Send the message to the Humidifier Control to stop humidifying.
 	 */
 	public void sendSprayOff();
+	
+	public boolean isSprayOn();
 }

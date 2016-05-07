@@ -26,11 +26,11 @@ public class FSMImplementationTest {
 
 	@Before
 	public void testSetup(){
-		pumpA = new PumpStub();
-		pumpB = new PumpStub();
 		gate = new GateStub();
 		signals = new OpticalSignalsStub();
 		sensor = new HumiditySensorStub();
+	    pumpA = new PumpStub(sensor);
+	    pumpB = new PumpStub(sensor);
 		humidifier = new HumidifierStub();
 		operatorPanel = new ManualControlStub();
 		timer = new TimerStub();
@@ -49,8 +49,7 @@ public class FSMImplementationTest {
         assertEquals(1, pumpA.getDeactivatingMessageCounter());
         assertEquals(1, pumpB.getActivatingMessageCounter());
         assertEquals(1, pumpB.getDeactivatingMessageCounter());
-        assertEquals(FSMState.HUMIDITY_OKAY, uut.getState());
-        
+        assertEquals(FSMState.HUMIDITY_OKAY, uut.getState());  
 	}
 
 }
