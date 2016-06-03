@@ -1,6 +1,5 @@
 package fsm;
 
-import implementation.FSMState;
 
 /**
  * Interface for state machine evaluation.
@@ -14,5 +13,5 @@ public interface IFSM {
 	 */
 	public void evaluate();
 	
-	public FSMState getState();
+	public HumidityState getState();
 }

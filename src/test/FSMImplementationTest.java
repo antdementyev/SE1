@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 import fsm.IFSM;
 import implementation.FSMImplementation;
 import implementation.FSMState;
+import implementation.HumidityOkay;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -49,7 +50,7 @@ public class FSMImplementationTest {
         assertEquals(1, pumpA.getDeactivatingMessageCounter());
         assertEquals(1, pumpB.getActivatingMessageCounter());
         assertEquals(1, pumpB.getDeactivatingMessageCounter());
-        assertEquals(FSMState.HUMIDITY_OKAY, uut.getState());  
+        assertEquals(HumidityOkay.getInstance(), uut.getState());  
 	}
 
 }

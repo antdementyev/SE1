@@ -6,17 +6,68 @@ import boundaryclasses.IManualControl;
 import boundaryclasses.IOpticalSignals;
 import boundaryclasses.IPump;
 import boundaryclasses.ITimer;
+import fsm.HumidityState;
 import fsm.IFSM;
 
 
 public class FSMImplementation implements IFSM {
-	private FSMState state;
+	private HumidityState state;
 	private IPump pumpA;
 	private IPump pumpB;
 	private IGate gate;
 	private IOpticalSignals signals;
 	private IHumiditySensor sensor;
 	private IHumidifier humidifier;
+	
+	public IPump getPumpA() {
+		return pumpA;
+	}
+
+
+	public IPump getPumpB() {
+		return pumpB;
+	}
+
+
+	public IGate getGate() {
+		return gate;
+	}
+
+
+	public IOpticalSignals getSignals() {
+		return signals;
+	}
+
+
+	public IHumiditySensor getSensor() {
+		return sensor;
+	}
+
+
+	public IHumidifier getHumidifier() {
+		return humidifier;
+	}
+
+
+	public IManualControl getOperatorPanel() {
+		return operatorPanel;
+	}
+
+
+	public ITimer getTimer() {
+		return timer;
+	}
+
+
+	public double getUpperBound() {
+		return upperBound;
+	}
+
+
+	public double getLowerBound() {
+		return lowerBound;
+	}
+
 	private IManualControl operatorPanel;
 	private ITimer timer;
 	private final double upperBound;
@@ -24,7 +75,7 @@ public class FSMImplementation implements IFSM {
 
 	public FSMImplementation( IPump pumpA, IPump pumpB, IGate gate, IOpticalSignals signals,
 			IHumidifier humidifier, IHumiditySensor sensor, IManualControl operatorPanel, ITimer timer) {
-		this.state = FSMState.HUMIDITY_OKAY;
+		this.state = HumidityOkay.getInstance();
 		this.pumpA = pumpA;
 		this.pumpB = pumpB;
 		this.gate = gate;
@@ -41,73 +92,34 @@ public class FSMImplementation implements IFSM {
 	@Override
 	public void evaluate() {
 		updateState();
-		switch(state) {
-		    case HUMIDITY_LOW:
-		        humidifier.sendSprayOn();
-	            signals.switchLampAOn();
-	            break;
-		    case HUMIDITY_OKAY:
-		        if (humidifier.isSprayOn()) {
-		            humidifier.sendSprayOff();
-		            signals.switchLampAOff();
-		        }
-		        break;
-		    case HUMIDITY_HIGH:
-		        signals.switchLampBOn();
-		        gate.sendCloseGate();
-	            while (!gate.isClosed()) {
-	                // warte auf Rückmeldung vom Tor
-	            }
-	            signals.switchLampBOff();
-	            if (activatePumps()) {
-	                // Pumpen wurden erfolgreich aktiviert
-	                while (sensor.getHumidity() > upperBound) {
-	                    // warte bis Feuchtigkeit sich stabilisiert
-	                }
-	                pumpA.sendDeactivate();
-	                pumpB.sendDeactivate();
-	                signals.switchLampBOn();
-	                gate.sendOpenGate();
-	                while (!gate.isOpen()) {  
-	                    // warte auf Rückmeldung vom Tor
-	                }
-	                signals.switchLampBOff();
-	                state = FSMState.HUMIDITY_OKAY;
-	            } else {
-	                // Probleme beim Aktivieren der Pumpen
-	                pumpA.sendDeactivate();
-	                pumpB.sendDeactivate();
-	                gate.sendOpenGate();
-	                state = FSMState.ERROR;
-	            }      
-	            break;
-		    case ERROR:
-                while (!operatorPanel.receivedAcknowledgement()) {    
-                    // warte auf manuelle Bestätigung
-                }
-                state = FSMState.HUMIDITY_HIGH;
-		}
+		state.evaluate(this);
+
 	}
 	
 	@Override
-	public FSMState getState() {
+	public HumidityState getState() {
 	    return state;
 	}
 	
+	public void setState(HumidityState state) {
+		this.state = state;
+	}
+
+
 	/**
 	 * Updates the FSM state based on an actual humidity.
 	 */
 	private void updateState() {
-	    if (state == FSMState.ERROR) {
+	    if (state == ErrorState.getInstance()) {
 	        // Status bleibt ohne Änderung
 	    } else {
 	        double humidity = sensor.getHumidity();
 	        if (humidity < lowerBound) {
-	            state = FSMState.HUMIDITY_LOW;
+	            state = HumidityLow.getInstance();
 	        } else if (humidity >= lowerBound && humidity <= upperBound) {
-	            state = FSMState.HUMIDITY_OKAY;
+	            state = HumidityOkay.getInstance();
 	        } else {
-	            state = FSMState.HUMIDITY_HIGH;
+	            state = HumidityHigh.getInstance();
 	        }
 	    }
 	}
@@ -116,7 +128,7 @@ public class FSMImplementation implements IFSM {
 	 * Aktiviert Zu- und Abluftpumpen 
 	 * @return true, wenn Aktivierung war erfolgreich während 5 Sekunden
 	 */
-	private boolean activatePumps() {
+	protected boolean activatePumps() {
 	    timer.startTime(5);
 	    pumpA.sendActivate();
 	    pumpB.sendActivate();
