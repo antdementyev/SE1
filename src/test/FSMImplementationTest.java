@@ -3,7 +3,6 @@ package test;
 import static org.junit.Assert.*;
 import fsm.IFSM;
 import implementation.FSMImplementation;
-import implementation.FSMState;
 import implementation.HumidityOkay;
 
 import org.junit.Before;
