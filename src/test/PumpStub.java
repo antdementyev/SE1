@@ -10,16 +10,20 @@ public class PumpStub implements IPump {
     private int signal;
     private int activatingMessageCounter;
     private int deactivatingMessageCounter;
+    private static char pumpTyp = 'A';
+    private char id ;
     
     
     public PumpStub(HumiditySensorStub sensor) {
         this.sensor = sensor;
+        id = pumpTyp;
+        pumpTyp++;
     }
     
 	@Override
 	public void sendActivate() {
 	    signal = TO_ACTIVATE;
-	    System.out.println("activate pump");
+	    System.out.println("activate pump " + id);
 	    sensor.reduceHumidity(25);;   //simuliere Wirkung auf Feuchtigkeit
 	    activatingMessageCounter++;
 	}
@@ -27,7 +31,7 @@ public class PumpStub implements IPump {
 	@Override
 	public void sendDeactivate() {
         signal = TO_DEACTIVATE;
-        System.out.println("deactivate pump");
+        System.out.println("deactivate pump " + id);
         deactivatingMessageCounter++;
 	}
 
